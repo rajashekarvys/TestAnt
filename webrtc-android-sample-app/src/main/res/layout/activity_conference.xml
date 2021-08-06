@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ConferenceActivity">
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/publish_view_renderer"
-        android:layout_width="144dp"
-        android:layout_height="144dp"
-
-        android:layout_gravity="center" />
+        android:layout_width="200dp"
+        android:layout_height="250dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_above="@+id/ll"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_marginTop="120dp"
         android:gravity="center">
 
@@ -24,32 +28,31 @@
             android:id="@+id/control_audio_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:text="Disable Audio"
+            android:text="stop Audio"
             android:onClick="controlAudio" />
 
         <Button
             android:id="@+id/control_video_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Disable Video"
-            android:layout_marginHorizontal="10dp"
+            android:text="stop Video"
             android:onClick="controlVideo" />
     </LinearLayout>
 
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/play_view_renderer1"
-        android:layout_height="144dp"
-        android:layout_width="144dp"
+        android:layout_height="230dp"
+        android:layout_width="230dp"
         android:layout_gravity="top|start"
-        android:layout_margin="16dp" />
+        android:layout_margin="5dp" />
+
     <org.webrtc.SurfaceViewRenderer
+        android:layout_below="@+id/play_view_renderer1"
         android:id="@+id/play_view_renderer2"
-        android:layout_height="144dp"
-        android:layout_width="144dp"
-        android:layout_gravity="top|end"
-        android:layout_margin="16dp"/>
-    <org.webrtc.SurfaceViewRenderer
+        android:layout_height="230dp"
+        android:layout_width="230dp"
+        android:layout_margin="5dp"/>
+   <!-- <org.webrtc.SurfaceViewRenderer
         android:id="@+id/play_view_renderer3"
         android:layout_height="144dp"
         android:layout_width="144dp"
@@ -60,13 +63,13 @@
         android:layout_height="144dp"
         android:layout_width="144dp"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"/>
+        android:layout_margin="16dp"/>-->
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/ll"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:gravity="center">
+        android:layout_alignParentBottom="true">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,4 +84,4 @@
         android:layout_height="match_parent" />
 
 
-</FrameLayout>
+</RelativeLayout>

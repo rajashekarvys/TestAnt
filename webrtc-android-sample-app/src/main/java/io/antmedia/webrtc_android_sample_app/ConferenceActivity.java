@@ -54,8 +54,8 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
 
         playViewRenderers.add(findViewById(R.id.play_view_renderer1));
         playViewRenderers.add(findViewById(R.id.play_view_renderer2));
-        playViewRenderers.add(findViewById(R.id.play_view_renderer3));
-        playViewRenderers.add(findViewById(R.id.play_view_renderer4));
+//        playViewRenderers.add(findViewById(R.id.play_view_renderer3));
+//        playViewRenderers.add(findViewById(R.id.play_view_renderer4));
 
         audioButton = findViewById(R.id.control_audio_button);
         videoButton = findViewById(R.id.control_video_button);
@@ -71,7 +71,7 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
         this.getIntent().putExtra(EXTRA_CAPTURETOTEXTURE_ENABLED, true);
         //  this.getIntent().putExtra(CallActivity.EXTRA_VIDEO_CALL, false);
 
-        String streamId = "streamcTest1"; //"stream1";
+        String streamId = "streamcsdsdsdTest1"; //"stream1";
         String roomId = "roomcTest1";
         conferenceManager = new ConferenceManager(
                 this,
