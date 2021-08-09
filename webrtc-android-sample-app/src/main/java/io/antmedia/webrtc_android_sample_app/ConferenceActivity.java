@@ -18,6 +18,7 @@ import org.webrtc.SurfaceViewRenderer;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Random;
 
 import de.tavendo.autobahn.WebSocket;
 import io.antmedia.webrtcandroidframework.ConferenceManager;
@@ -34,6 +35,7 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
     private ConferenceManager conferenceManager;
     private Button audioButton;
     private Button videoButton;
+    private Button joinConference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +56,12 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
 
         playViewRenderers.add(findViewById(R.id.play_view_renderer1));
         playViewRenderers.add(findViewById(R.id.play_view_renderer2));
-//        playViewRenderers.add(findViewById(R.id.play_view_renderer3));
-//        playViewRenderers.add(findViewById(R.id.play_view_renderer4));
+        playViewRenderers.add(findViewById(R.id.play_view_renderer3));
+        playViewRenderers.add(findViewById(R.id.play_view_renderer4));
 
         audioButton = findViewById(R.id.control_audio_button);
         videoButton = findViewById(R.id.control_video_button);
-
+        joinConference =  findViewById(R.id.joinConference);
         // Check for mandatory permissions.
         for (String permission : CallActivity.MANDATORY_PERMISSIONS) {
             if (this.checkCallingOrSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
@@ -71,8 +73,9 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
         this.getIntent().putExtra(EXTRA_CAPTURETOTEXTURE_ENABLED, true);
         //  this.getIntent().putExtra(CallActivity.EXTRA_VIDEO_CALL, false);
 
-        String streamId = "streamcsdsdsdTest1"; //"stream1";
-        String roomId = "roomcTest1";
+
+        String streamId = getIntent().getStringExtra("streamId"); //"stream1";
+        String roomId = getIntent().getStringExtra("roomId");;
         conferenceManager = new ConferenceManager(
                 this,
                 this,
@@ -87,13 +90,17 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
 
         conferenceManager.setPlayOnlyMode(false);
         conferenceManager.setOpenFrontCamera(true);
+
+        conferenceManager.joinTheConference();
+
+
+
     }
     public void joinConference(View v) {
 
         if (!conferenceManager.isJoined()) {
             Log.w(getClass().getSimpleName(), "Joining Conference");
             ((Button)v).setText("Leave");
-            conferenceManager.joinTheConference();
         }
         else {
             ((Button)v).setText("Join");

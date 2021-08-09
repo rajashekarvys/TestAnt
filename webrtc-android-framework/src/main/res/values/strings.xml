@@ -7,6 +7,8 @@
         Please enter a room name. Room names are shared with everyone, so think
         of something unique and send it to a friend.
     </string>
+    <string name="enable_all_permission">Please enable all permissions to run Conference app</string>
+
     <string name="favorites">Favorites</string>
     <string name="no_favorites">No favorites</string>
     <string name="invalid_url_title">Invalid URL</string>
