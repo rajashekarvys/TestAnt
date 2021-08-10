@@ -1,8 +1,10 @@
 package io.antmedia.webrtc_android_sample_app;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +38,10 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
     private Button audioButton;
     private Button videoButton;
     private Button joinConference;
+    private boolean isPublished;
+    private LocalTimer localTimer;
+    private String streamId;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +78,10 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
 
         this.getIntent().putExtra(EXTRA_CAPTURETOTEXTURE_ENABLED, true);
         //  this.getIntent().putExtra(CallActivity.EXTRA_VIDEO_CALL, false);
-
-
-        String streamId = getIntent().getStringExtra("streamId"); //"stream1";
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Connecting...");
+        dialog.show();
+        streamId = getIntent().getStringExtra("streamId"); //"stream1";
         String roomId = getIntent().getStringExtra("roomId");;
         conferenceManager = new ConferenceManager(
                 this,
@@ -91,19 +98,51 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
         conferenceManager.setPlayOnlyMode(false);
         conferenceManager.setOpenFrontCamera(true);
 
-        conferenceManager.joinTheConference();
 
 
+        localTimer =  new LocalTimer(30 * 1000,4000);
+        localTimer.start();
+        joinConference.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.show();
+                joinConference(view);
+            }
+        });
 
     }
+
+    class LocalTimer extends CountDownTimer {
+        public LocalTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long l) {
+
+            if (!isPublished){
+                if (!conferenceManager.isJoined()) {
+                    Log.w("WSChannelRTCClient", "Timer Joining Conference"+l);
+                    conferenceManager.joinTheConference();
+                }
+            }
+        }
+
+        @Override
+        public void onFinish() {
+
+        }
+    }
+
+
+
     public void joinConference(View v) {
 
         if (!conferenceManager.isJoined()) {
             Log.w(getClass().getSimpleName(), "Joining Conference");
-            ((Button)v).setText("Leave");
+            conferenceManager.joinTheConference();
         }
         else {
-            ((Button)v).setText("Join");
             conferenceManager.leaveFromConference();
         }
     }
@@ -113,25 +152,56 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
     public void onPlayStarted(String streamId) {
         Log.w(getClass().getSimpleName(), "onPlayStarted");
         Toast.makeText(this, "Play started", Toast.LENGTH_LONG).show();
+        try{
+            dialog.dismiss();
+            localTimer.cancel();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onPublishStarted(String streamId) {
         Log.w(getClass().getSimpleName(), "onPublishStarted");
-        Toast.makeText(this, "Publish started", Toast.LENGTH_LONG).show();
+        isPublished = true;
+        joinConference.setText("Leave");
+        try{
+
+            dialog.dismiss();
+            localTimer.cancel();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+//        Toast.makeText(this, "Publish started", Toast.LENGTH_LONG).show();
 
     }
 
     @Override
     public void onPublishFinished(String streamId) {
         Log.w(getClass().getSimpleName(), "onPublishFinished");
-        Toast.makeText(this, "Publish finished", Toast.LENGTH_LONG).show();
+        joinConference.setText("Join");
+        isPublished = false;
+        try{
+            dialog.dismiss();
+            localTimer.cancel();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+//        Toast.makeText(this, "Publish finished", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onPlayFinished(String streamId) {
         Log.w(getClass().getSimpleName(), "onPlayFinished");
-        Toast.makeText(this, "Play finished", Toast.LENGTH_LONG).show();
+        joinConference.setText("Join");
+        isPublished = false;
+//        Toast.makeText(this, "Play finished", Toast.LENGTH_LONG).show();
+        try{
+            dialog.dismiss();
+            localTimer.cancel();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -230,23 +300,43 @@ public class ConferenceActivity extends Activity implements IWebRTCListener, IDa
     }
 
     public void controlAudio(View view) {
-        if (conferenceManager.isPublisherAudioOn()) {
-            conferenceManager.disableAudio();
-            audioButton.setText("Enable Audio");
-        } else {
-            conferenceManager.enableAudio();
-            audioButton.setText("Disable Audio");
+        if (conferenceManager.isJoined()) {
+            if (conferenceManager.isPublisherAudioOn()) {
+                conferenceManager.disableAudio();
+                audioButton.setText("Enable Audio");
+            } else {
+                conferenceManager.enableAudio();
+                audioButton.setText("Disable Audio");
+            }
+        }else{
+            Toast.makeText(this, "Not joined conference", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void controlVideo(View view) {
-        if (conferenceManager.isPublisherVideoOn()) {
-            conferenceManager.disableVideo();
-            videoButton.setText("Enable Video");
+        if (conferenceManager.isJoined()) {
+            if (conferenceManager.isPublisherVideoOn()) {
+                    conferenceManager.disableVideo();
+                    videoButton.setText("Enable Video");
 
-        } else {
-            conferenceManager.enableVideo();
-            videoButton.setText("Disable Video");
+                } else {
+                    conferenceManager.enableVideo();
+                    videoButton.setText("Disable Video");
+                }
+        }else{
+            Toast.makeText(this, "Not joined conference", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try{
+            conferenceManager.onPlayFinished(streamId);
+            localTimer.cancel();
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

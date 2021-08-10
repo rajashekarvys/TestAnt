@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity  {
         if (streamId.length()>0 && roomId.length()>0) {
             Intent intent = new Intent(this, ConferenceActivity.class);
             intent.putExtra("streamId",streamId + randomNum);
-            intent.putExtra("roomId", roomId);
+            intent.putExtra("roomId",  roomId);
             startActivity(intent);
         }
 

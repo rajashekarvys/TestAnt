@@ -58,7 +58,7 @@ public class ConferenceManager implements AntMediaSignallingEvents, IDataChannel
     private boolean playOnlyMode = false;
 
 
-    Handler reconnectionHandler = new Handler();
+    /*Handler reconnectionHandler = new Handler();
     Runnable reconnectionRunnable = new Runnable() {
         @Override
         public void run() {
@@ -68,7 +68,7 @@ public class ConferenceManager implements AntMediaSignallingEvents, IDataChannel
                 reconnectionHandler.postDelayed(this, RECONNECTION_PERIOD_MLS);
             }
         }
-    };
+    };*/
     public ConferenceManager(Context context, IWebRTCListener webRTCListener, Intent intent, String serverUrl, String roomName, SurfaceViewRenderer publishViewRenderer, ArrayList<SurfaceViewRenderer> playViewRenderers, String streamId, IDataChannelObserver dataChannelObserver) {
         this.context = context;
         this.intent = intent;
@@ -89,14 +89,14 @@ public class ConferenceManager implements AntMediaSignallingEvents, IDataChannel
         initWebSocketHandler();
     }
 
-    private void attempt2Reconnect() {
+    /*private void attempt2Reconnect() {
         Log.w(getClass().getSimpleName(), "Attempt2Reconnect called");
         if (!wsHandler.isConnected()) {
             startStream();
         }
     }
-
-    public void startStream() {
+*/
+ /*   public void startStream() {
         if (wsHandler == null) {
             wsHandler = new WebSocketHandler(this, handler);
             wsHandler.connect(serverUrl);
@@ -106,7 +106,7 @@ public class ConferenceManager implements AntMediaSignallingEvents, IDataChannel
             wsHandler.connect(serverUrl);
         }
         joinTheConference();
-    }
+    }*/
     public void setPlayOnlyMode(boolean playOnlyMode) {
         this.playOnlyMode = playOnlyMode;
     }
@@ -207,7 +207,12 @@ public class ConferenceManager implements AntMediaSignallingEvents, IDataChannel
 
     @Override
     public void onPublishFinished(String streamId) {
-        peers.get(streamId).onPublishFinished(streamId);
+        try{
+            peers.get(streamId).onPublishFinished(streamId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     public String getStreamId() {
