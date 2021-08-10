@@ -10,12 +10,12 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/bottom"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="150dp">
 
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/publish_view_renderer"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"/>
 
